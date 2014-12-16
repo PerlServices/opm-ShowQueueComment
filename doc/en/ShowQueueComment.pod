@@ -1,0 +1,21 @@
+=head1 NAME
+
+ShowQueueComment
+
+=head1 DESCRIPTION
+
+With this addon you can store additional information about the queue
+in the comments field. Whenever you select a queue in the ticket
+create masks (AgentTicketPhone, AgentTicketEmail), this comment
+is shown.
+
+=head1 REPOSITORY AND BUGTRACKER
+
+The code repository and a bugtracker is available at
+L<http://github.com/reneeb/otrs-ShowQueueComment>.
+
+=head1 AUTHOR AND LICENSE
+
+This addon is licensed under the terms of AGPL 3.
+
+Renee Baecker, C<< <info@perl-services.de> >>
