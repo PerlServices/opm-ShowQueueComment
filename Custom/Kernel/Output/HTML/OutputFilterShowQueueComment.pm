@@ -14,8 +14,10 @@ use warnings;
 
 use List::Util qw(first);
 
-use Kernel::System::JSON;
-use Kernel::System::Queue;
+our @ObjectDependencies = qw(
+    Kernel::System::JSON
+    Kernel::System::Queue
+);
 
 our $VERSION = 0.02;
 
@@ -26,21 +28,7 @@ sub new {
     my $Self = {};
     bless( $Self, $Type );
 
-    # get needed objects
-    for my $Object (
-        qw(MainObject ConfigObject LogObject LayoutObject ParamObject)
-        )
-    {
-        $Self->{$Object} = $Param{$Object} || die "Got no $Object!";
-    }
-
     $Self->{UserID} = $Param{UserID};
-
-    $Self->{EncodeObject} = $Param{EncodeObject} || Kernel::System::Encode->new( %{$Self} );
-    $Self->{TimeObject}   = $Param{TimeObject}   || Kernel::System::Time->new( %{$Self} );
-    $Self->{JSONObject}   = $Param{JSONObject}   || Kernel::System::JSON->new( %{$Self} );
-    $Self->{DBObject}     = $Self->{LayoutObject}->{DBObject};
-    $Self->{QueueObject}  = $Param{QueueObject}   || Kernel::System::Queue->new( %{$Self} );
 
     return $Self;
 }
@@ -54,7 +42,10 @@ sub Run {
     return 1 if !$Templatename;
     return 1 if !$Param{Templates}->{$Templatename};
 
-    my %Queues = $Self->{QueueObject}->GetAllQueues(
+    my $QueueObject = $Kernel::OM->Get('Kernel::System::Queue');
+    my $JSONObject  = $Kernel::OM->Get('Kernel::System::JSON');
+
+    my %Queues = $QueueObject->GetAllQueues(
         UserID => $Self->{UserID},
         Type   => 'create',
     );
@@ -62,7 +53,7 @@ sub Run {
     my $Mapping = {};
 
     for my $QueueID ( keys %Queues ) {
-        my %QueueInfo = $Self->{QueueObject}->QueueGet(
+        my %QueueInfo = $QueueObject->QueueGet(
             ID => $QueueID,
         );
 
@@ -70,7 +61,7 @@ sub Run {
         $Mapping->{$Key} = $QueueInfo{Comment};
     }
 
-    my $MappingJSON = $Self->{JSONObject}->Encode( Data => $Mapping );
+    my $MappingJSON = $JSONObject->Encode( Data => $Mapping );
 
     my $JS = qq~
         <!-- dtl:js_on_document_complete -->
@@ -80,9 +71,6 @@ sub Run {
                     var parent_elem   = \$(this).closest('div');
                     var comment_div   = \$('#queue_comment');
                     var queue_comment = queue_comments[\$(this).val()] || '';
-console.log( parent_elem );
-console.log( comment_div );
-console.log( queue_comment );
 
                     if ( comment_div.get(0) ) {
                         comment_div.text(queue_comment);
