@@ -80,9 +80,6 @@ sub Run {
                     var parent_elem   = \$(this).closest('div');
                     var comment_div   = \$('#queue_comment');
                     var queue_comment = queue_comments[\$(this).val()] || '';
-console.log( parent_elem );
-console.log( comment_div );
-console.log( queue_comment );
 
                     if ( comment_div.get(0) ) {
                         comment_div.text(queue_comment);
