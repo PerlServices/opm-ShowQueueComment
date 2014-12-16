@@ -59,6 +59,10 @@ sub Run {
         Type   => 'create',
     );
 
+    if ( !%Queues ) {
+        %Queues = $Self->{QueueObject}->GetAllQueues();
+    }
+
     my $Mapping = {};
 
     for my $QueueID ( keys %Queues ) {
