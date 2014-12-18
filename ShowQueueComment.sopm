@@ -2,7 +2,7 @@
 <otrs_package version="1.0">
     <!-- GENERATED WITH OTRS::OPM::Maker::Command::sopm (1.27) -->
     <Name>ShowQueueComment</Name>
-    <Version>3.3.2</Version>
+    <Version>3.3.3</Version>
     <Framework>3.2.x</Framework>
     <Framework>3.3.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
@@ -12,7 +12,7 @@
     <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
     <Filelist>
         <File Permission="644" Location="Custom/Kernel/Output/HTML/OutputFilterShowQueueComment.pm" />
-        <File Permission="644" Location="Kernel/Config/Files/TicketTemplates.xml" />
+        <File Permission="644" Location="Kernel/Config/Files/ShowQueueComment.xml" />
         <File Permission="644" Location="doc/ShowQueueComment.json" />
         <File Permission="644" Location="doc/en/ShowQueueComment.pod" />
     </Filelist>
