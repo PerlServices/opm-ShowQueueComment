@@ -1,13 +1,13 @@
 # --
-# Kernel/Output/HTML/OutputFilterShowQueueComment.pm
-# Copyright (C) 2014 Perl-Services.de, http://www.perl-services.de/
+# Kernel/Output/HTML/FilterElementPost/ShowQueueComment.pm
+# Copyright (C) 2014 - 2016 Perl-Services.de, http://www.perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
 # did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
 # --
 
-package Kernel::Output::HTML::OutputFilterShowQueueComment;
+package Kernel::Output::HTML::FilterElementPost::ShowQueueComment;
 
 use strict;
 use warnings;
@@ -18,8 +18,6 @@ our @ObjectDependencies = qw(
     Kernel::System::JSON
     Kernel::System::Queue
 );
-
-our $VERSION = 0.02;
 
 sub new {
     my ( $Type, %Param ) = @_;
@@ -42,8 +40,9 @@ sub Run {
     return 1 if !$Templatename;
     return 1 if !$Param{Templates}->{$Templatename};
 
-    my $QueueObject = $Kernel::OM->Get('Kernel::System::Queue');
-    my $JSONObject  = $Kernel::OM->Get('Kernel::System::JSON');
+    my $QueueObject  = $Kernel::OM->Get('Kernel::System::Queue');
+    my $JSONObject   = $Kernel::OM->Get('Kernel::System::JSON');
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
     my %Queues = $QueueObject->GetAllQueues(
         UserID => $Self->{UserID},
@@ -67,33 +66,26 @@ sub Run {
 
     my $MappingJSON = $JSONObject->Encode( Data => $Mapping );
 
-    my $JS = qq~
-        <!-- dtl:js_on_document_complete -->
-            <script type="text/javascript">
-                var queue_comments = $MappingJSON;
-                \$('#Dest').bind('change', function() {
-                    var parent_elem   = \$(this).closest('div');
-                    var comment_div   = \$('#queue_comment');
-                    var queue_comment = queue_comments[\$(this).val()] || '';
+    $LayoutObject->AddJSOnDocumentComplete(
+        Code => qq~
+            var queue_comments = $MappingJSON;
+            \$('#Dest').bind('change', function() {
+                var parent_elem   = \$(this).closest('div');
+                var comment_div   = \$('#queue_comment');
+                var queue_comment = queue_comments[\$(this).val()] || '';
 
-                    if ( comment_div.get(0) ) {
-                        comment_div.text(queue_comment);
-                    }
-                    else {
-                        var comment_div = \$('<div id="queue_comment">').text(queue_comment);
-                        parent_elem.append( comment_div );
-                    }
-                });
-            </script>
-        <!-- dtl:js_on_document_complete -->
-    ~;
+                if ( comment_div.get(0) ) {
+                    comment_div.text(queue_comment);
+                }
+                else {
+                    var comment_div = \$('<div id="queue_comment">').text(queue_comment);
+                    parent_elem.append( comment_div );
+                }
+            });
+        ~,
+    );
 
-    ${ $Param{Data} } =~ s{\z}{
-        $JS
-    }xms;
-
-
-    return ${ $Param{Data} };
+    return 1;
 }
 
 1;
