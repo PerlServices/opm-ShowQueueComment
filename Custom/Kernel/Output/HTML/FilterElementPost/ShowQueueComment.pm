@@ -50,7 +50,7 @@ sub Run {
     );
 
     if ( !%Queues ) {
-        %Queues = $Self->{QueueObject}->GetAllQueues();
+        %Queues = $QueueObject->GetAllQueues();
     }
 
     my $Mapping = {};
