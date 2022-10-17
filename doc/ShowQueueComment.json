@@ -1,12 +1,10 @@
 {
     "name": "ShowQueueComment",
-    "version": "6.0.1",
+    "version": "10.0.1",
+    "product": "otobo",
     "framework": [
-        "6.0.x",
-        "6.1.x",
-        "6.2.x",
-        "6.3.x",
-        "6.4.x"
+        "10.0.x",
+        "10.1.x"
     ],
     "vendor": {
         "name":  "Perl-Services.de",

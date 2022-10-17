@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<otrs_config version="2.0" init="Config">
+<otobo_config version="2.0" init="Config">
     <Setting Name="Frontend::Output::FilterElementPost###OutputFilterShowQueueComment" Required="0" Valid="1">
         <Description Translatable="1">Module to show queue comment in ticket masks.</Description>
         <Navigation>Core::OutputFilter</Navigation>
@@ -17,4 +17,4 @@
             </Hash>
         </Value>
     </Setting>
-</otrs_config>
+</otobo_config>
