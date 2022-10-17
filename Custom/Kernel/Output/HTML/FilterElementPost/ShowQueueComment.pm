@@ -1,6 +1,5 @@
 # --
-# Kernel/Output/HTML/FilterElementPost/ShowQueueComment.pm
-# Copyright (C) 2014 - 2016 Perl-Services.de, http://www.perl-services.de/
+# Copyright (C) 2014 - 2022 Perl-Services.de, https://www.perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -41,8 +40,28 @@ sub Run {
     return 1 if !$Param{Templates}->{$Templatename};
 
     my $QueueObject  = $Kernel::OM->Get('Kernel::System::Queue');
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
     my $JSONObject   = $Kernel::OM->Get('Kernel::System::JSON');
+    my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+
+    if ( $Templatename eq 'AgentTicketZoom' ) {
+        my $TicketID = $ParamObject->GetParam( Param => 'TicketID' );
+        my %Ticket   = $TicketObject->TicketGet(
+            TicketID => $TicketID,
+            UserID   => $Self->{UserID},
+        );
+
+        my %QueueInfo = $QueueObject->QueueGet(
+            ID => $Ticket{QueueID},
+        );
+
+        my $Comment = $QueueInfo{Comment} // '';
+        my $Queue   = $Ticket{Queue};
+        ${ $Param{Data} } =~ s{title="$Queue">$Queue\K}{<br>$Comment}xms;
+
+        return 1;
+    }
 
     my %Queues = $QueueObject->GetAllQueues(
         UserID => $Self->{UserID},
