@@ -56,9 +56,19 @@ sub Run {
             ID => $Ticket{QueueID},
         );
 
-        my $Comment = $QueueInfo{Comment} // '';
-        my $Queue   = $Ticket{Queue};
-        ${ $Param{Data} } =~ s{title="$Queue">$Queue\K}{<br>$Comment}xms;
+        my $Comment    = $QueueInfo{Comment} // '';
+        my $QueueLabel = $LayoutObject->{LanguageObject}->Translate('Queue');
+
+        ${ $Param{Data} } =~ s{
+            (
+                <label>\Q$QueueLabel\E.*?:</label> \s+
+                .*? \K </p>
+            )
+         }{
+             <br>$Comment
+             </p>
+         }xms;
+
 
         return 1;
     }
